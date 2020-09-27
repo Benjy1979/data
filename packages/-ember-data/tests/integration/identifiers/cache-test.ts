@@ -95,26 +95,6 @@ module('Integration | Identifiers - cache', function(hooks) {
       assert.equal(identifier.type, 'person', 'identifier has type');
       assert.ok(identifier.lid, 'identifier has lid');
     });
-
-    test('cannot create new identifier with same record', async function(assert) {
-      const runspiredHash = {
-        type: 'person',
-        id: '1',
-        attributes: {
-          name: 'runspired',
-        },
-      };
-      cache.createIdentifierForNewRecord(runspiredHash);
-
-      try {
-        cache.createIdentifierForNewRecord(runspiredHash);
-      } catch (e) {
-        assert.equal(
-          e.message,
-          'The lid generated for the new record is not unique as it matches an existing identifier'
-        );
-      }
-    });
   });
 
   module('updateRecordIdentifier()', function() {
@@ -148,27 +128,6 @@ module('Integration | Identifiers - cache', function(hooks) {
 
       assert.equal(mergedIdentifier.id, '2', 'merged identifier has new id');
       assert.equal(mergedIdentifier.type, 'person', 'merged identifier has same type');
-    });
-
-    test('errors if try to update with different type', async function(assert) {
-      const runspiredHash = {
-        type: 'person',
-        id: '1',
-        attributes: {
-          name: 'runspired',
-        },
-      };
-      let identifier = cache.createIdentifierForNewRecord(runspiredHash);
-
-      try {
-        cache.updateRecordIdentifier(identifier, { type: 'child', id: '1' });
-      } catch (e) {
-        assert.equal(
-          e.message,
-          "The 'type' for a RecordIdentifier cannot be updated once it has been set. Attempted to set type for '[CLIENT_ORIGINATED] person:1 (@ember-data:lid-person-1)' to 'child'.",
-          'merged identifier has same id'
-        );
-      }
     });
 
     test('id is null', async function(assert) {
