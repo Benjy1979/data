@@ -97,9 +97,8 @@ export default class InternalModelFactory {
       // we cannot merge internalModels when both have records
       // (this may not be strictly true, we could probably swap the internalModel the record points at)
       if (im && otherIm && im.hasRecord && otherIm.hasRecord) {
-        let { type, id, lid } = matchedIdentifier;
         throw new Error(
-          `Failed to update the 'id' for the RecordIdentifier '${identifier}' to '${resourceData.id}', because that id is already in use by ${type}:${id} (${lid})`
+          `Failed to update the 'id' for the RecordIdentifier '${identifier.type}:${identifier.id} (${identifier.lid})' to '${resourceData.id}', because that id is already in use by '${matchedIdentifier.type}:${matchedIdentifier.id} (${matchedIdentifier.lid})'`
         );
       }
 
