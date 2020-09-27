@@ -95,6 +95,26 @@ module('Integration | Identifiers - cache', function(hooks) {
       assert.equal(identifier.type, 'person', 'identifier has type');
       assert.ok(identifier.lid, 'identifier has lid');
     });
+
+    test('cannot create new identifier with same record', async function(assert) {
+      const runspiredHash = {
+        type: 'person',
+        id: '1',
+        attributes: {
+          name: 'runspired',
+        },
+      };
+      cache.createIdentifierForNewRecord(runspiredHash);
+
+      try {
+        cache.createIdentifierForNewRecord(runspiredHash);
+      } catch (e) {
+        assert.equal(
+          e.message,
+          'The lid generated for the new record is not unique as it matches an existing identifier'
+        );
+      }
+    });
   });
 
   module('updateRecordIdentifier()', function() {
@@ -149,6 +169,22 @@ module('Integration | Identifiers - cache', function(hooks) {
           'merged identifier has same id'
         );
       }
+    });
+
+    test('id is null', async function(assert) {
+      const runspiredHash = {
+        type: 'person',
+        id: '1',
+        attributes: {
+          name: 'runspired',
+        },
+      };
+      let identifier = cache.createIdentifierForNewRecord(runspiredHash);
+
+      let mergedIdentifier = cache.updateRecordIdentifier(identifier, { type: 'person', id: null });
+
+      assert.equal(mergedIdentifier.id, null, 'merged identifier has null id');
+      assert.equal(mergedIdentifier.type, identifier.type, 'merged identifier has same type');
     });
   });
 });
